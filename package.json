@@ -1,0 +1,14 @@
+{
+  "name": "uport-tutorial",
+  "private": true,
+  "dependencies": {
+    "path": "latest",
+    "express": "latest",
+    "ngrok": "latest",
+    "did-jwt": "latest",
+    "uport-transports": "latest",
+    "uport-credentials": "latest",
+    "did-resolver": "latest",
+    "ethr-did-resolver": "latest"
+  }
+}
