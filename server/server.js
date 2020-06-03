@@ -55,6 +55,7 @@ app.get("/login", (req, res) => {
 app.get("/create", (req, res) => {
 	credentials
 		.createDisclosureRequest({
+			requested: ["name", "country", "avatar"],
 			notifications: true,
 			callbackUrl: endpoint + "/callback2",
 		})
@@ -125,6 +126,8 @@ app.post("/callback2", (req, res) => {
 		// push token and public encryption key (boxPub)
 		const push = transports.push.send(creds.pushToken, creds.boxPub);
 
+		console.log(creds);
+
 		// The createVerification() function returns a promise that resolves to a JWT like the following.
 		// A push notification will appear in the mobile app of the user who has just scanned the QR code,
 		// containing the verification below:
@@ -152,7 +155,9 @@ app.post("/callback2", (req, res) => {
 			.createVerification({
 				sub: creds.did,
 				exp: Math.floor(new Date().getTime() / 1000) + 30 * 24 * 60 * 60,
-				claim: { Identity: { "Last Seen": `${new Date()}` } },
+
+				// todo: image check
+				claim: { Avatar: { "Last Seen": `${new Date()}`, Uri: `${creds.avatar.uri}` } },
 				// Note, the above is a complex (nested) claim.
 				// Also supported are simple claims:  claim: {'Key' : 'Value'}
 			})

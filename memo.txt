@@ -7,11 +7,11 @@ example:
 a. create
 
 const didJWT = require('did-jwt')
-const signer = didJWT.SimpleSigner('<< priv key >>');
+const signer = didJWT.SimpleSigner('5de4c8fe1209e7f41d1b9f1fba7da424bc57d696f6e19b871496ea0a9e4fc227');
 
 let jwt = '';
-didJWT.createJWT({aud: '<< did >>', exp: 1957463421, name: 'uPort Developer'},
-                 {alg: 'ES256K-R', issuer: '<< did >>', signer}).then( response =>
+didJWT.createJWT({aud: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815', exp: 1957463421, name: 'uPort Developer'},
+                 {alg: 'ES256K-R', issuer: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815', signer}).then( response =>
                  { jwt = response });
 
 console.log(jwt);

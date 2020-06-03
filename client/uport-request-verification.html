@@ -15,7 +15,7 @@
     /////////////////////////////
 
     const Connect = window.uportconnect
-    const uport = new Connect('Queen Kong', {
+    const uport = new Connect('Persol Client', {
       network: "ropsten"
     })
 
@@ -27,10 +27,11 @@
     If any of the claim titles match a verification the user has, that the mobile user can choose to disclose that piece of information to the requester.    
     */
     uport.requestDisclosure(
-      { verified: ['ExampleClaims'] }
+      { verified: ['Katie'] }
     )
 
     uport.onResponse('disclosureReq').then(res => {
+      console.log(JSON.stringify(res))
       json = JSON.stringify(res.payload)
       console.log(json)
       document.querySelector('#msg').innerHTML = "Congratulations you are now `logged in`.  Here is the response:  " + json
