@@ -1,0 +1,80 @@
+1. eth-did:
+
+https://github.com/decentralized-identity/did-jwt#signer-functions
+
+example:
+
+a. create
+
+const didJWT = require('did-jwt')
+const signer = didJWT.SimpleSigner('<< priv key >>');
+
+let jwt = '';
+didJWT.createJWT({aud: '<< did >>', exp: 1957463421, name: 'uPort Developer'},
+                 {alg: 'ES256K-R', issuer: '<< did >>', signer}).then( response =>
+                 { jwt = response });
+
+console.log(jwt);
+
+// decode it
+let decoded = didJWT.decode(jwt);
+
+// output:
+{
+  header: { typ: 'JWT', alg: 'ES256K-R' },
+  payload: {
+    iat: 1591166356,
+    exp: 1957463421,
+    aud: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815',
+    name: 'Persol Client',
+    iss: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815'
+  },
+  signature: 'Q9cIohSvNCUqJmhcl-qNNylgGqwKKXGLgt_tk17YB0k060cOB4Z-FRHgnOCCGuPr_HZjID0zcybZLrjOXkrl4QA',
+  data: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1OTExNjYzNTYsImV4cCI6MTk1NzQ2MzQyMSwiYXVkIjoiZGlkOmV0aHI6MHhhM2Y0YmZhOTVjMGQwZWZkOWY0Y2JjOGUyN2VmY2ViYTk4ZjM4ODE1IiwibmFtZSI6IlBlcnNvbCBDbGllbnQiLCJpc3MiOiJkaWQ6ZXRocjoweGEzZjRiZmE5NWMwZDBlZmQ5ZjRjYmM4ZTI3ZWZjZWJhOThmMzg4MTUifQ'
+}
+
+
+b. resolve
+
+const Resolver = require("did-resolver").Resolver;
+const getResolver = require("ethr-did-resolver").getResolver;
+
+const providerConfig = { rpcUrl: "https://rinkeby.infura.io/v3/18c0c6beb5764a6fbd1e8a71ec841e8a" };
+const resolver = new Resolver(getResolver(providerConfig));
+
+let verifiedRespone = {};
+// pass the JWT from step 1 & 2
+didJWT.verifyJWT(jwt, {resolver: resolver, audience: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815'}).then((response) =>
+{ verifiedRespone = response });
+
+console.log(verifiedRespone);
+
+// output
+{
+  payload: {
+    iat: 1591166356,
+    exp: 1957463421,
+    aud: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815',
+    name: 'Persol Client',
+    iss: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815'
+  },
+  doc: {
+    '@context': 'https://w3id.org/did/v1',
+    id: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815',
+    publicKey: [ [Object] ],
+    authentication: [ [Object] ]
+  },
+  issuer: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815',
+  signer: {
+    id: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815#owner',
+    type: 'Secp256k1VerificationKey2018',
+    owner: 'did:ethr:0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815',
+    ethereumAddress: '0xa3f4bfa95c0d0efd9f4cbc8e27efceba98f38815'
+  },
+  jwt: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1OTExNjYzNTYsImV4cCI6MTk1NzQ2MzQyMSwiYXVkIjoiZGlkOmV0aHI6MHhhM2Y0YmZhOTVjMGQwZWZkOWY0Y2JjOGUyN2VmY2ViYTk4ZjM4ODE1IiwibmFtZSI6IlBlcnNvbCBDbGllbnQiLCJpc3MiOiJkaWQ6ZXRocjoweGEzZjRiZmE5NWMwZDBlZmQ5ZjRjYmM4ZTI3ZWZjZWJhOThmMzg4MTUifQ.Q9cIohSvNCUqJmhcl-qNNylgGqwKKXGLgt_tk17YB0k060cOB4Z-FRHgnOCCGuPr_HZjID0zcybZLrjOXkrl4QA'
+}
+
+
+c. change DID owner
+
+await ethrDid.changeOwner(web3.eth.accounts[2])
